@@ -236,7 +236,7 @@ function applyCategories(comparable) {
         var index = bar.attr('data-index');
         var relevantStats = _.findWhere(comparable, { 'id': index })['stats'];
         $.each(relevantStats, function(key, value) {
-            var stat = $('<span class="stat" title="'+value['name']+'" data-index="' + value['name'] + '" data-value="' + value['value'] + '"></span>');
+            var stat = $('<span class="stat" title="'+value['name']+' ('+value['name']+')" data-index="' + value['name'] + '" data-value="' + value['value'] + '"></span>');
             stat.css({ 'background-color': colorRange(key) });
             bar.children('.statsblock').append(stat);
         }); //each relevantStats

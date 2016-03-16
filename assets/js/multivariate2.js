@@ -72,6 +72,7 @@ function loadHealthData() {
 
         //listen for changes in dropdown values or minimum occurence filter
         $('.bar-chart-title select, .bar-chart-title input').change(function(evt) {
+        	 $('.loading').show();
         	//reset dashboard
         	$('.sandbox').html('');
         	$('.legend, .controls').remove();
@@ -102,11 +103,14 @@ function loadHealthData() {
                 };
             });
             //refresh dashboard
+        
             universalController();
+             $('.loading').hide();
         });
         //display initial dash board
         window.ourArray = featureData;
         universalController();
+        $('.loading').hide();
 
     }); //d3.tsv
 }; //loadHealthData

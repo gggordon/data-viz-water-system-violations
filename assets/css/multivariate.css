@@ -520,6 +520,11 @@ h6 {
 	color:rgba(30, 189, 236, 0.7);
 }
 
+.loading {
+	text-align: center;
+    margin-top: 20px;
+}
+
 footer {
 	text-align: center;
 	font-style: italic;;

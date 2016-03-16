@@ -339,7 +339,7 @@ function initializeControls() {
         $('.cat_full_height_on').addClass('active').siblings().removeClass('active');
     })
     $(document).on('click', '.cat_full_height_off', function() {
-        $('.statsblock').css({ 'height': '3px' });
+        $('.statsblock').css({ 'height': '5px' });
         $('.cat_full_height_off').addClass('active').siblings().removeClass('active');
     })
 

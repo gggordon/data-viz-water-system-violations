@@ -1,9 +1,8 @@
-
 function loadHealthData() {
     d3.csv("./data/violation_report.csv", function(data) {
         console.log('data acquired from ./data/violation_report.csv');
         console.log(data);
-        
+
         //---- Data Preparation
 
         //Group by region (EPA Region)
@@ -17,11 +16,11 @@ function loadHealthData() {
         window.regionViolationStats = {};
 
         //Prepare Data for Dashboard
-        
+
         featureData = _.map(regionData, function(records, key) {
             //Reduce Region Records into feature set
             var reduced = _.reduce(records, function(r1, r2) {
-            	//sum the population count
+                //sum the population count
                 var result = {
                     "Population Served Count": parseInt(r1["Population Served Count"]) + parseInt(r2["Population Served Count"])
                 };
@@ -39,10 +38,10 @@ function loadHealthData() {
 
             //identify number of different nominal values in each feature
             for (var i = 0; i < features.length; i++) {
-            	
+
                 regionViolationStats[key][features[i]] =
                     _.countBy(
-                    	reduced[features[i]] //get concatenated nominal values
+                        reduced[features[i]] //get concatenated nominal values
                         .replace(/\([a-zA-Z0-9 \/\-]+\)/g, '') //remove data within brackets
                         .replace(/ *, */g, '|') //remove spaces and trim (left and right ) each entry
                         .split('|') //split into features
@@ -73,18 +72,18 @@ function loadHealthData() {
 
         //listen for changes in dropdown values or minimum occurence filter
         $('.bar-chart-title select, .bar-chart-title input').change(function(evt) {
-        	 $('.loading').show();
-        	//reset dashboard
-        	$('.sandbox').html('');
-        	$('.legend, .controls').remove();
-        	//get chosen feature 
+            $('.loading').show();
+            //reset dashboard
+            $('.sandbox').html('');
+            $('.legend, .controls').remove();
+            //get chosen feature 
             var newFeature = $('.bar-chart-title select').val();
             //get specified minimum occurence filter
             var filterMin = $('.bar-chart-title input').val();
             //verify whether minimum occurence filter is a number
-            if(isNaN(filterMin) || filterMin==""){
-            	//if not a number simply replace with default and refresh dashboard
-            	//window.alert('The value entered is not a number, the default of 500 minimum reports will be used');
+            if (isNaN(filterMin) || filterMin == "") {
+                //if not a number simply replace with default and refresh dashboard
+                //window.alert('The value entered is not a number, the default of 500 minimum reports will be used');
                 $('.bar-chart-title input').val(0);
                 filterMin = 0;
             }
@@ -104,9 +103,9 @@ function loadHealthData() {
                 };
             });
             //refresh dashboard
-        
+
             universalController();
-             $('.loading').hide();
+            $('.loading').hide();
         });
         //display initial dash board
         window.ourArray = featureData;
@@ -138,7 +137,7 @@ $(document).ready(function() {
 // Think of universalController() as our Table of Contents
 function universalController() {
 
-   // console.log('Universal Controller - ready to run your functions!');
+    // console.log('Universal Controller - ready to run your functions!');
 
     ////// STEP 1: Draw a bar for each year of our data.
     initializeBars(ourArray);
@@ -215,15 +214,32 @@ function relativeBarWidths() {
 /*=======================================================
 STEP 1B: SPEND-BY-CATEGORY LEVEL OF DATA
 =======================================================*/
+var specifiedColours = {
+    background: {},
+    border: {}
+};
 
 function createLegend(comparable) {
     var colorRange = d3.scale.category20().domain(d3.range(101).reverse());
     $('.bar-chart').after('<div class="legend"></div>');
-    var categories = _.pluck(comparable[0].stats, 'name');
+
+    //var categories = _.pluck(comparable[0].stats, 'name');
+    var categories = _.uniq(_.flatten(_.map(comparable, function(set) {
+        return _.pluck(set.stats, 'name')
+    })));
+    //reset colours
+    specifiedColours = {
+        background: {},
+        border: {}
+    };
     $.each(categories, function(key, value) {
         var span = $('<span>' + value + '</span>');
-        span.css({ 'border-color': d3.rgb(colorRange(key)).brighter(1) });
-        span.css({ 'background-color': d3.rgb(colorRange(key)).darker(1) });
+
+        specifiedColours.border[value] = d3.rgb(colorRange(key)).brighter(1);
+        specifiedColours.background[value] = d3.rgb(colorRange(key)).darker(1);
+
+        span.css({ 'border-color': specifiedColours.border[value] });
+        span.css({ 'background-color': specifiedColours.background[value] });
         $('.legend').append(span);
     })
 }; //createLegend
@@ -236,8 +252,8 @@ function applyCategories(comparable) {
         var index = bar.attr('data-index');
         var relevantStats = _.findWhere(comparable, { 'id': index })['stats'];
         $.each(relevantStats, function(key, value) {
-            var stat = $('<span class="stat" title="'+value['name']+' ('+value['value']+')" data-index="' + value['name'] + '" data-value="' + value['value'] + '"></span>');
-            stat.css({ 'background-color': colorRange(key) });
+            var stat = $('<span class="stat" title="' + value['name'] + ' (' + value['value'] + ')" data-index="' + value['name'] + '" data-value="' + value['value'] + '"></span>');
+            stat.css({ 'background-color': specifiedColours.background[value['name']] });
             bar.children('.statsblock').append(stat);
         }); //each relevantStats
     }); //each bar

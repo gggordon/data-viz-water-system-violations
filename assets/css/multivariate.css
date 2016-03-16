@@ -595,7 +595,7 @@ footer {
 
 .bar .statsblock {
     position: absolute;
-    height: 3px;
+    height: 5px;
     bottom: 0px;
     left: 0px;
     width: 100%;

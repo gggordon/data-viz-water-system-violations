@@ -169,7 +169,7 @@ function initializeBars(comparable) {
     $('.sandbox').append('<div class="bar-chart"></div>');
 
     // We reduce our comparable to yearly totals
-    yearTotals = _.map(comparable, function(obj, iter) {
+    groupTotals = _.map(comparable, function(obj, iter) {
         var valueArray = _.pluck(obj.stats, "value");
         return _.reduce(valueArray, function(memo, num) {
             return memo + num
@@ -177,9 +177,9 @@ function initializeBars(comparable) {
     }); //_.map
 
     // For each of this yearly totals, create a bar in our new bar chart.
-    $.each(yearTotals, function(key, value) {
+    $.each(groupTotals, function(key, value) {
         $('.bar-chart').append('<div class="bar" data-index="' + comparable[key].id + '" data-value="' + value + '"><span><em>' + comparable[key].id + ':</em> <strong>' + commafy(value) + '</strong></span></div>');
-    }); //each yearTotals
+    }); //each groupTotals
 
     //////// Step 1A: Make the length of each bar relative to its $ spent
     relativeBarWidths();
@@ -203,7 +203,7 @@ STEP 1A: RELATIVE BAR WIDTHS
 
 // Each bar should have its width proportional to the relative max
 function relativeBarWidths() {
-    var max = _.max(yearTotals);
+    var max = _.max(groupTotals);
     $('.bar').each(function() {
         $(this).css({ 'width': $(this).attr('data-value') / max * 100 + "%" })
     }); //each bar
@@ -325,8 +325,8 @@ function initializeControls() {
     // Set up a controls box that can be style with css with .controls{}
     $('#world-container').after('<div class="controls"><h5>Controls</h5></div>');
     $('.controls').append('<div><h6>Categories Full Height:</h6><a class="cat_full_height_on">On</a><a class="cat_full_height_off">Off</a></div>')
-    $('.controls').append('<div><h6>Normalize by Annual Volume ("what is the % of annual spend?"):</h6><a class="norm_tv_on">On</a><a class="norm_tv_off">Off</a></div>')
-    $('.controls').append('<div><h6>Normalize by Category Size: ("what year made the biggest impact to a given category?")</h6><a class="norm_cs_on">On</a><a class="norm_cs_off">Off</a></div>')
+    $('.controls').append('<div><h6>Normalize by Feature Total ("what is the % of feature total"):</h6><a class="norm_tv_on">On</a><a class="norm_tv_off">Off</a></div>')
+    $('.controls').append('<div><h6>Normalize by Feature Size: ("what feature made the biggest impact in a given category?")</h6><a class="norm_cs_on">On</a><a class="norm_cs_off">Off</a></div>')
 
     // Set the initial state of our on/off switches
     $('.norm_tv_off').addClass('active');

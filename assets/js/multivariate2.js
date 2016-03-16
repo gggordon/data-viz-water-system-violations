@@ -10,7 +10,8 @@ function loadHealthData() {
         regionData = _.groupBy(data, 'EPA Region');
 
         //Features to consider in report
-        var features = ["Violation Type", "Is Health Based", "Is Major Violation", "Contaminant Name", "Compliance Status"];
+        var features = ["Violation Type", "Is Health Based", "Is Major Violation", "Contaminant Name", "Compliance Status", "PWS Type", "Primacy Agency", "Primary Source", "Public Notification Tier"];
+        //["Violation Type", "Is Health Based", "Is Major Violation", "Contaminant Name", "Compliance Status"];
 
         //Violation Stats Per Region Global Variable
         window.regionViolationStats = {};
@@ -81,11 +82,11 @@ function loadHealthData() {
             //get specified minimum occurence filter
             var filterMin = $('.bar-chart-title input').val();
             //verify whether minimum occurence filter is a number
-            if(isNaN(filterMin)){
+            if(isNaN(filterMin) || filterMin==""){
             	//if not a number simply replace with default and refresh dashboard
             	//window.alert('The value entered is not a number, the default of 500 minimum reports will be used');
-                $('.bar-chart-title input').val(500);
-                filterMin = 500;
+                $('.bar-chart-title input').val(0);
+                filterMin = 0;
             }
             filterMin = parseFloat(filterMin);
             //prepare data in format required by dashboard

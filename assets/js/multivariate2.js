@@ -419,31 +419,34 @@ function handleTouch() {
             var globaloffset = $(this).position().left;
             $('.statsblock').each(function() {
                 $(this).css({ 'height': '100%' });
-                var blockoffset = $(this).children('[data-index="' + $(self).attr('data-index') + '"]').position().left;
+                var $elem = $(this).children('[data-index="' + $(self).attr('data-index') + '"]');
+                if($elem.length == 0)return;
+                var blockoffset = $elem.position().left;
                 $(this).animate({ 'left': globaloffset - blockoffset }, 200);
                 $(this).parents('.bar').children('span').children('strong').text(commafy($(this).children('[data-index="' + $(self).attr('data-index') + '"]').attr('data-value')));
             }); //each
 
             // Fade out all bars not of the category you clicked
-            $('.stat:not("[data-index=' + $(self).attr('data-index') + ']")').css({ 'opacity': 0.2 });
-            $('.stat[data-index=' + $(self).attr('data-index') + ']').addClass('active');
+            $('.stat:not("[data-index=\'' + $(self).attr('data-index') + '\']")').css({ 'opacity': 0.2 });
+            $('.stat[data-index="' + $(self).attr('data-index') + '"]').addClass('active');
             $('.bar').css({ 'background-color': 'transparent' });
 
             //// OPTIONAL: Sort bars based on order
-            // var barHeight = $('.bar').height() + 11;
-            // var sorted = _.sortBy($('.stat[data-index="' + $(self).attr('data-index') + '"]'), function(obj, iter) {
-            //     return $(obj).width();
-            // }); //sorted
-            // _.map(sorted, function(obj, iter) {
-            //     var startHeight = barHeight * (iter) - $(obj).parents('.bar').position().top + 20;
-            //     $(obj).parents('.bar').css({ 'top': startHeight }).attr('which', iter);
-            // })
+            var barHeight = $('.bar').height() + 11;
+            $('.bar:not(:has(.stat[data-index="' + $(self).attr('data-index') + '"])) ').addClass('hide-bar');
+            var sorted = _.sortBy($('.stat[data-index="' + $(self).attr('data-index') + '"]'), function(obj, iter) {
+                return $(obj).width();
+            }); //sorted
+            _.map(sorted, function(obj, iter) {
+                var startHeight = barHeight * (iter) - $(obj).parents('.bar').position().top + 20;
+                $(obj).parents('.bar').css({ 'top': startHeight }).attr('which', iter);
+            })
 
             // Reset the position of everything wehn you release your mouse
             $(document).on('mouseup', function() {
                 $('.statsblock').animate({ 'left': '0px', 'height': $('.cat_full_height_on').is('.active') ? '100%' : '3px' }, 200);
                 $('.stat').css({ 'opacity': '1' }).removeClass('active');
-                $('.bar').css({ 'top': '0px', 'background-color': 'rgba(0,0,0,0.1)' });
+                $('.bar').css({ 'top': '0px', 'background-color': 'rgba(0,0,0,0.1)' }).removeClass('hide-bar');
                 $('.bar').each(function() {
                     $(this).children('span').children('strong').text(commafy($(this).attr('data-value')));
                 })
